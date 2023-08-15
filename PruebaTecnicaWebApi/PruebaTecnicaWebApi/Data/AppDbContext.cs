@@ -11,6 +11,7 @@ namespace PruebaTecnicaWebApi.Data
 
         public DbSet<Company> Companies { get; set; }
         public DbSet<Clients> Clients { get; set; }
-        public DbSet<History> History { get; set; }
+        public DbSet<HistoryCLients> HistoriesClients { get; set; }
+        public DbSet<HistoryCompany> HistoriesCompany { get; set; }
     }
 }

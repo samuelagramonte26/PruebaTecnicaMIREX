@@ -14,6 +14,7 @@ namespace PruebaTecnicaWebApi.Models
         [Required]
         public int CompanyId { get; set; }
         public Company Company { get; set; }
+        public List<HistoryCLients> Histories { get; set; }
         public bool Active { get; set; } = true;
     }
 }

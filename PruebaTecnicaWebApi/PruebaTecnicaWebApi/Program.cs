@@ -1,12 +1,16 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using PruebaTecnicaWebApi.Data;
+using PruebaTecnicaWebApi.Interfaces;
+using PruebaTecnicaWebApi.Services.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 var ConnectionString = builder.Configuration.GetConnectionString("localConexion") ?? "";
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+              x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);;
 builder.Services.AddDbContext<AppDbContext>(op => op.UseSqlServer(ConnectionString));
 
 builder.Services.AddEndpointsApiExplorer();
@@ -19,6 +23,9 @@ builder.Services.AddCors(p =>
         b.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
     });
 });
+
+builder.Services.AddTransient<ICompanyRepository,CompanyRepository>();
+builder.Services.AddTransient<IClientsRepository,ClientRepository>();
 
 var app = builder.Build();
 

@@ -7,6 +7,6 @@
         public string Address { get; set; }
         public string Phone { get; set; }
         public string RNC { get; set; }
-        public List<Clients> Clients { get; set; }
+        public List<ClientsListDTO> Clients { get; set; }
     }
 }

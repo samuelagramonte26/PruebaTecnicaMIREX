@@ -9,6 +9,5 @@ namespace PruebaTecnicaWebApi.Models.DTOs
         public string Identification{ get; set; }
         public string Address { get; set; }
         public int CompanyId { get; set; }
-        public Company Company { get; set; }
     }
 }

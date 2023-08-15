@@ -15,6 +15,8 @@ namespace PruebaTecnicaWebApi.Models
         public string RNC { get; set; }
         public bool Active { get; set; } = true;
         public List<Clients> Clients { get; set; }
+        public List<HistoryCompany> Histories { get; set; }
+
 
     }
 }
