@@ -1,35 +1,35 @@
 import { FC, useEffect, useReducer, useState } from 'react';
-import { EmpresasContext, empresasReducer } from './';
-import { Company } from '@/interfaces';
+import { ClientesContext, ClientesReducer } from './';
+import {  Clientes } from '@/interfaces';
 import { webApi } from '@/api';
-import { AxiosError, isAxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { useNotifications } from '@/hooks/useNotiffications';
 
-export interface EmpresasState {
-    Empresas: Company[];
+export interface ClientesState {
+    Clientes: Clientes[];
 }
 
 
-const Empresas_INITIAL_STATE: EmpresasState = {
-    Empresas: [],
+const Clientes_INITIAL_STATE: ClientesState = {
+    Clientes: [],
 }
 
 
-export const EmpresasProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
+export const ClientesProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
 
-    const [state, dispatch] = useReducer(empresasReducer, Empresas_INITIAL_STATE);
+    const [state, dispatch] = useReducer(ClientesReducer, Clientes_INITIAL_STATE);
     const { error, success } = useNotifications();
     const [showform, setShow] = useState(false);
-    const [initialForm, setInitialForm] = useState({} as Company)
+    const [initialForm, setInitialForm] = useState({} as Clientes)
 
     const setShowForm = (value: boolean) => setShow(value)
 
-    //Cargar listado de empresas
-    const refreshCompany = async () => {
+    //Cargar Listado de clientes 
+    const refreshClientes = async () => {
         try {
-            const { data } = await webApi.get<Company[]>('/company')
+            const { data } = await webApi.get<Clientes[]>('/client')
             dispatch({
-                type: '[Empresas] - LoadCompany',
+                type: '[Clientes] - LoadClientes',
                 payload: data
             })
         } catch (err) {
@@ -39,14 +39,15 @@ export const EmpresasProvider = ({ children }: { children: JSX.Element | JSX.Ele
 
     }
     useEffect(() => {
-        refreshCompany();
+        refreshClientes();
     }, [])
 
-    const addCompany = async (obj: Company) => {
-        try {
-            const { data } = await webApi.post('/company', obj)
+    const addClientes = async (obj: Clientes) => {
 
-            dispatch({ type: '[Empresas] - AddCompany', payload: data })
+        try {
+            const { data } = await webApi.post('/client', obj)
+
+            dispatch({ type: '[Clientes] - AddClientes', payload: data })
             handleClose();
             success();
         } catch (err) {
@@ -54,10 +55,10 @@ export const EmpresasProvider = ({ children }: { children: JSX.Element | JSX.Ele
             error(errors.message)
         }
     }
-    const editCompany = async (obj: Company) => {
+    const editClientes = async (obj: Clientes) => {
         try {
-            const { data } = await webApi.put(`/company/${obj.id}`, obj)
-            dispatch({ type: '[Empresas] - EditCompany', payload: data })
+            const { data } = await webApi.put(`/client/${obj.id}`, obj)
+            dispatch({ type: '[Clientes] - EditClientes', payload: data })
             handleClose();
             success();
         } catch (err) {
@@ -65,12 +66,12 @@ export const EmpresasProvider = ({ children }: { children: JSX.Element | JSX.Ele
             error(errors.message)
         }
     }
-    const deleteCompany = async (id: number) => {
+    const deleteClientes = async (id: number) => {
         try {
 
-            await webApi.delete(`/company/${id}`)
+            await webApi.delete(`/client/${id}`)
             dispatch({
-                type: '[Empresas] - DeleteCompany',
+                type: '[Clientes] - DeleteClientes',
                 payload: id
             })
             success();
@@ -80,49 +81,51 @@ export const EmpresasProvider = ({ children }: { children: JSX.Element | JSX.Ele
         }
     }
 
-    const handleEdit = (obj: Company) => {
+    const handleEdit = (obj: Clientes) => {
 
         setInitialForm({ ...obj })
         setShow(true)
     }
-    const handleSave = (obj: Company) => {
+
+
+    const handleSave = (obj: Clientes) => {
+
 
         if ('id' in obj && obj.id !== 0) {//Si el objeto contiene un id y ese id es distinto de 0 e asume que se esta actualizando un registro
-            editCompany(obj)
+            editClientes(obj)
         } else {
-            addCompany(obj)
+            addClientes(obj)
 
         }
     }
 
     const handleClose = () => {
         setShow(false);
-        const form: Company = {
+        const form: Clientes = {
             id: 0,
             name: '',
             address: '',
-            phone: '',
-            rnc: '',
-            clients: []
+            identification: '',
+            companyId: 0,
         }
         setInitialForm(form);
     }
 
     return (
-        <EmpresasContext.Provider value={{
+        <ClientesContext.Provider value={{
             ...state,
             showform,
             initialForm,
 
             setShowForm,
-            deleteCompany,
-            addCompany,
+            deleteClientes,
+            addClientes,
             handleSave,
             handleClose,
             handleEdit
 
         }}>
             {children}
-        </EmpresasContext.Provider>
+        </ClientesContext.Provider>
     )
 };

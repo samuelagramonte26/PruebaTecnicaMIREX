@@ -1,41 +1,45 @@
 import { useContext, useState } from 'react'
-import { Input, MainLayout, ModalForm, TableCompany } from "@/components"
-import { Button, Grid, Typography, CircularProgress } from "@mui/material"
+import { Input, MainLayout, ModalForm, TableClientes } from "@/components"
+import { Button, Grid, Typography, CircularProgress, TextField, MenuItem } from "@mui/material"
 import AddIcon from "@mui/icons-material/AddCircleOutlineOutlined"
-import { EmpresasContext } from "@/context/empresas"
+
 import { Formik } from 'formik'
 import { CancelSharp, Save } from "@mui/icons-material";
-import { Company } from '@/interfaces'
+import { Clientes } from '@/interfaces'
+import { ClientesContext } from '@/context/clientes'
+import { EmpresasContext } from '@/context/empresas'
 
 
 
-const EmpresasPage = () => {
-    const { handleSave, showform, setShowForm, initialForm, handleClose } = useContext(EmpresasContext)
 
-    const validateFform = ({ name, address, phone, rnc }: Company) => {
-        const error = {} as Company;
+const ClientesPage = () => {
+    const { handleSave, showform, setShowForm, initialForm, handleClose } = useContext(ClientesContext)
+    const {Empresas} = useContext(EmpresasContext);
+
+    const validateFform = ({ name, address, identification, companyId }: Clientes) => {
+        const error = {} as Clientes;
 
         if (name?.trim().length === 0 || !name)
             error.name = 'El campo nombre es requerido!'
         if (address?.trim().length === 0 || !address)
             error.address = 'El campo direccion es requerido!'
-        if (phone?.trim().length === 0 || !phone)
-            error.phone = 'El campo telefono es requerido!'
-        if (rnc?.trim().length === 0 || !rnc)
-            error.rnc = 'El campo RNC es requerido!'
+        if (identification?.trim().length === 0 || !identification)
+            error.identification = 'El campo identificacion es requerido!'
+        if (!companyId)
+            error.companyId = 'El campo empresa es requerido!'
 
         return error;
     }
 
     return (
-        <MainLayout title="Empresas">
+        <MainLayout title="Clientes">
             <Grid container justifyContent='center' >
                 <Grid item xs={12} mt={10} lg={8}>
-                    <Typography variant="h4" align="center">Mantenimiento empresas</Typography>
+                    <Typography variant="h4" align="center">Mantenimiento Clientes</Typography>
                 </Grid>
 
                 <Grid item xs={12}  lg={8}>
-                    <Grid xs={2} sx={{ marginBottom: 2, justifyContent: 'start' }}>
+                    <Grid  sx={{ marginBottom: 2, justifyContent: 'start' }}>
                         <Button
                             startIcon={<AddIcon />}
                             onClick={() => setShowForm(true)}
@@ -45,11 +49,11 @@ const EmpresasPage = () => {
                         </Button>
                     </Grid>
                     <Grid>
-                        <TableCompany />
+                        <TableClientes />
                     </Grid>
                 </Grid>
             </Grid>
-            <ModalForm show={showform} setShow={setShowForm} title='Empresa'>
+            <ModalForm show={showform} setShow={setShowForm} title='Cliente'>
                 <Formik
                     initialValues={{ ...initialForm }}
                     validate={validateFform}
@@ -82,27 +86,52 @@ const EmpresasPage = () => {
                                 />
                                 <Input
                                     requerido
-                                    label="telefono"
+                                    label="Identificaion"
                                     type="text"
-                                    placeholder="Ej: 000-000-0000"
-                                    name='phone'
-                                    value={values.phone}
+                                  
+                                    name='identification'
+                                    value={values.identification}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    error={errors.phone}
+                                    error={errors.identification}
                                 />
-                                <Input
-                                    label="RNC"
-                                    type="text"
+                               <Grid
+                            item
+                            xs={12}
+                            sm={12}
+                            md={12}
+                            xl={12}
+                            sx={{ mt: 2 }}
+                        >
+                            <TextField
+                                fullWidth
+                                id="outlined-select-currency"
+                                select
+                                label="Empresa"
+                                value={values.companyId}
+                                onChange={handleChange}
+                                name='companyId'
+                                helperText="Por favor selecciona una empresa!"
+                                onBlur={handleBlur}
 
-                                    name='rnc'
-                                    value={values.rnc}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    requerido
-                                    error={errors.rnc}
-                                />
+                            >
+                                {Empresas.map((option) => (
+                                    <MenuItem key={option.id} value={option.id}>
+                                        {`${option.name}`}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <Grid item
+                                xs={12}
+                                sm={12}
+                                md={12}
+                                xl={12}
+                                sx={{ mt: 1 }}
+                            >
+                                <Typography  color='red'>{errors && errors.companyId}</Typography>
 
+                            </Grid>
+                        </Grid>
 
                             </Grid>
                             <Grid container sx={{ mt: 2, padding: 2 }} spacing={2}>
@@ -135,4 +164,4 @@ const EmpresasPage = () => {
     )
 }
 
-export default EmpresasPage
+export default ClientesPage

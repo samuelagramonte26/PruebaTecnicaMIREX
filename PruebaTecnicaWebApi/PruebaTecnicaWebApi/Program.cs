@@ -10,12 +10,15 @@ var ConnectionString = builder.Configuration.GetConnectionString("localConexion"
 // Add services to the container.
 
 builder.Services.AddControllers().AddJsonOptions(x =>
-              x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);;
+              x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);//Configuracion para ignorar refferencias ciclicas
+
 builder.Services.AddDbContext<AppDbContext>(op => op.UseSqlServer(ConnectionString));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
+
+//Configuracion de CORS
 builder.Services.AddCors(p =>
 {
     p.AddPolicy("policy", b =>

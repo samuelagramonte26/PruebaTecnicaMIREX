@@ -33,11 +33,13 @@ namespace PruebaTecnicaWebApi.Services.Repository
             await context.SaveChangesAsync();
             var companyListDTO = mapper.Map<CompanyListDTO>(company);
 
+            //Registro en el historico de empresas
             HistoryCompany history = new();
             history.Action = Models.Action.Insert.GetDescription();
             history.Date = DateTime.Now;
             history.companyId = companyListDTO.Id;
             context.Add(history);
+
             await context.SaveChangesAsync();
 
             return companyListDTO;
@@ -52,11 +54,13 @@ namespace PruebaTecnicaWebApi.Services.Repository
             
             await context.SaveChangesAsync();
 
+            //Registro en el historico de empresas
             HistoryCompany history = new();
             history.Action = Models.Action.Delete.GetDescription();
             history.Date = DateTime.Now;
             history.companyId = companyId;
             context.Add(history);
+
             await context.SaveChangesAsync();
         }
 
@@ -75,11 +79,13 @@ namespace PruebaTecnicaWebApi.Services.Repository
             company = mapper.Map(companyCreateDTO,company);
             await context.SaveChangesAsync();
 
+            //Registro en el historico de empresas
             HistoryCompany history = new();
             history.Action = Models.Action.Update.GetDescription();
             history.Date = DateTime.Now;
             history.companyId = company.Id;
             context.Add(history);
+
             await context.SaveChangesAsync();
 
             return mapper.Map<CompanyListDTO>(company);

@@ -27,12 +27,16 @@ namespace PruebaTecnicaWebApi.Services.Repository
             context.Add(client);
             await context.SaveChangesAsync();
             var clientListDTO = mapper.Map<ClientsListDTO>(client);
+            var company = context.Companies.FirstOrDefault(x => x.Id == clientCreateDTO.CompanyId);
+            clientListDTO.Company = mapper.Map<CompanyListDTO>(company);
 
+            //Registro en el historico de clientes
             HistoryCLients history = new();
             history.Action = Models.Action.Insert.GetDescription();
             history.Date = DateTime.Now;
             history.clientId = clientListDTO.Id;
             context.Add(history);
+
             await context.SaveChangesAsync();
 
             return clientListDTO;
@@ -47,11 +51,13 @@ namespace PruebaTecnicaWebApi.Services.Repository
             
             await context.SaveChangesAsync();
 
+            //Registro en el historico de clientes
             HistoryCLients history = new();
             history.Action = Models.Action.Delete.GetDescription();
             history.Date = DateTime.Now;
             history.clientId = clientId;
             context.Add(history);
+
             await context.SaveChangesAsync();
         }
 
@@ -67,14 +73,20 @@ namespace PruebaTecnicaWebApi.Services.Repository
             var client = await context.Clients.FirstOrDefaultAsync(x => x.Id == id);
             if (client == null) throw new Exception("Cliente no encontrado");
 
-            client = mapper.Map(clientCreateDTO,client);
+            client = mapper.Map(clientCreateDTO,client);//Mapear datos del DTO al modelo base
             await context.SaveChangesAsync();
 
+            var company = context.Companies.FirstOrDefault(x => x.Id == clientCreateDTO.CompanyId);
+            client.Company = company;
+
+
+            //Registro en el historico de clientes
             HistoryCLients history = new();
             history.Action = Models.Action.Update.GetDescription();
             history.Date = DateTime.Now;
             history.clientId = client.Id;
             context.Add(history);
+
             await context.SaveChangesAsync();
 
             return mapper.Map<ClientsListDTO>(client);

@@ -13,25 +13,32 @@ import {
     TablePagination,
     TextField,
     IconButton,
+    Link,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { usePagination } from '@mui/lab';
 import { EmpresasContext } from '@/context/empresas';
+import { useRouter } from 'next/router';
+import { useNotifications } from '@/hooks/useNotiffications';
 
 export const TableCompany = () => {
-   
-    const {Empresas:data} = useContext(EmpresasContext)
+
+    const { Empresas: data, deleteCompany, handleEdit } = useContext(EmpresasContext)
     const [page, setPage] = useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = useState<number>(5);
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const router = useRouter()
+
+    const { confirm } = useNotifications()
 
     const filteredData = data.length > 0 ? data.filter((row) =>
-        row.Name.toLowerCase().includes(searchTerm.toLowerCase())
-    ): []
+        row.name.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : []
 
     const { items } = usePagination({
         count: Math.ceil(filteredData.length / rowsPerPage),
     });
+
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -72,22 +79,24 @@ export const TableCompany = () => {
                         {filteredData
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row) => (
-                                <TableRow key={row.Id}>
-                                    <TableCell>{row.Id}</TableCell>
-                                    <TableCell>{row.Name}</TableCell>
-                                    <TableCell>{row.Address}</TableCell>
-                                    <TableCell>{row.Phone}</TableCell>
-                                    <TableCell>{row.RNC}</TableCell>
+                                <TableRow key={row.id}>
+                                    <TableCell>{row.id}</TableCell>
+                                    <TableCell>{row.name}</TableCell>
+                                    <TableCell>{row.address}</TableCell>
+                                    <TableCell>{row.phone}</TableCell>
+                                    <TableCell>{row.rnc}</TableCell>
                                     <TableCell>
-                                        <IconButton>
-                                            <EditIcon color='warning'/>
+                                        <IconButton onClick={() => handleEdit(row)}>
+                                            <EditIcon color='warning' />
                                         </IconButton>
-                                        <IconButton>
-                                            <DeleteIcon color='error'/>
+                                        <IconButton onClick={() => confirm(() => deleteCompany(row.id))}>
+                                            <DeleteIcon color='error' />
                                         </IconButton>
-                                        <IconButton>
-                                            <VisibilityIcon color='info'/>
-                                        </IconButton>
+                                        <a href={`/empresas/${row.id}`}>
+                                            <IconButton >
+                                                <VisibilityIcon color='info' />
+                                            </IconButton>
+                                        </a>
                                     </TableCell>
                                 </TableRow>
                             ))}

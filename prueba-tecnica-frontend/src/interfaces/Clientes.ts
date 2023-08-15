@@ -1,7 +1,10 @@
+import { Company } from ".";
+
 export interface Clientes{
-    Id: number;
-    Name: string;
-    Identification: string;
-    Address: string;
-    CompanyId: number;
+    id: number;
+    name: string;
+    identification: string;
+    address: string;
+    companyId: number | string;
+    company?:Company
 }

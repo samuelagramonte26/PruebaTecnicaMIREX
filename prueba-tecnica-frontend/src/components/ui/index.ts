@@ -1,2 +1,5 @@
 export * from './NavBar'
 export * from './TableCompany'
+export * from './ModalForm'
+export * from './Input'
+export * from './TableClient'

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import {
     Paper,
     Table,
@@ -16,33 +15,26 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { usePagination } from '@mui/lab';
+import { ClientesContext } from '@/context/clientes';
+import { useNotifications } from '@/hooks/useNotiffications';
 
-interface Data {
-    id: number;
-    name: string;
-    age: number;
-}
-
-const initialData: Data[] = [
-    { id: 1, name: 'John', age: 25 },
-    { id: 2, name: 'Jane', age: 30 },
-    { id: 3, name: 'Michael', age: 28 },
-    // ... (añade más datos)
-];
-
-const TableWithPaginationAndFilter: React.FC = () => {
-    const [data, setData] = useState<Data[]>(initialData);
+export const TableClientes = () => {
+   
+    const {Clientes:data,deleteClientes,handleEdit} = useContext(ClientesContext)
     const [page, setPage] = useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = useState<number>(5);
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const filteredData = data.filter((row) =>
+    const {confirm} = useNotifications()
+
+    const filteredData = data.length > 0 ? data.filter((row) =>
         row.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    ): []
 
     const { items } = usePagination({
         count: Math.ceil(filteredData.length / rowsPerPage),
     });
+
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -74,8 +66,8 @@ const TableWithPaginationAndFilter: React.FC = () => {
                             <TableCell>ID</TableCell>
                             <TableCell>Nombre</TableCell>
                             <TableCell>Direccion</TableCell>
-                            <TableCell>Telefono</TableCell>
-                            <TableCell>RNC</TableCell>
+                            <TableCell>Identificacion</TableCell>
+                            <TableCell>Empresa</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -86,19 +78,17 @@ const TableWithPaginationAndFilter: React.FC = () => {
                                 <TableRow key={row.id}>
                                     <TableCell>{row.id}</TableCell>
                                     <TableCell>{row.name}</TableCell>
-                                    <TableCell>{row.age}</TableCell>
-                                    <TableCell>{row.age}</TableCell>
-                                    <TableCell>{row.age}</TableCell>
+                                    <TableCell>{row.address}</TableCell>
+                                    <TableCell>{row.identification}</TableCell>
+                                    <TableCell>{row.company?.name}</TableCell>
                                     <TableCell>
-                                        <IconButton>
+                                        <IconButton onClick={()=>handleEdit(row)}>
                                             <EditIcon color='warning'/>
                                         </IconButton>
-                                        <IconButton>
+                                        <IconButton onClick={()=>confirm(()=>deleteClientes(row.id))}>
                                             <DeleteIcon color='error'/>
                                         </IconButton>
-                                        <IconButton>
-                                            <VisibilityIcon color='info'/>
-                                        </IconButton>
+                                       
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -119,4 +109,4 @@ const TableWithPaginationAndFilter: React.FC = () => {
     );
 };
 
-export default TableWithPaginationAndFilter;
+
